@@ -25,8 +25,6 @@ public class ProductDao {
         return product;
     }
 
-
-
     public void add(Product product) throws ClassNotFoundException, SQLException {
         Connection connection = connectionMaker.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("insert into productinfo (id, title, price) VALUES (?,?,?)");
@@ -38,5 +36,7 @@ public class ProductDao {
         preparedStatement.close();
         connection.close();
     }
+
+
     //"delete from userinfo where id = ?"
 }
