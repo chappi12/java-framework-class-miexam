@@ -5,6 +5,10 @@ import java.sql.*;
 public class ProductDao {
     private ConnectionMaker connectionMaker;
 
+    public ProductDao() {
+
+    }
+
     public ProductDao(ConnectionMaker connectionMaker) {
         this.connectionMaker = connectionMaker;
     }
@@ -35,6 +39,10 @@ public class ProductDao {
 
         preparedStatement.close();
         connection.close();
+    }
+
+    public void setConnectionMaker(JejuConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
     }
 
 
