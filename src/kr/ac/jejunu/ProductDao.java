@@ -2,10 +2,9 @@ package kr.ac.jejunu;
 
 import java.sql.*;
 
-public class ProductDao {
+public abstract class ProductDao {
     public Product get(Long id) throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://117.17.102.106/chappi", "root", "1234");
+        Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("select * from productinfo where id = ?");
         preparedStatement.setLong(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -20,9 +19,10 @@ public class ProductDao {
         return product;
     }
 
+
+
     public void add(Product product) throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://117.17.102.106/chappi", "root", "1234");
+        Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("insert into productinfo (id, title, price) VALUES (?,?,?)");
         preparedStatement.setLong(1, product.getId());
         preparedStatement.setString(2, product.getTitle());
@@ -32,6 +32,8 @@ public class ProductDao {
         preparedStatement.close();
         connection.close();
     }
+
+    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 
     //"delete from userinfo where id = ?"
 }
