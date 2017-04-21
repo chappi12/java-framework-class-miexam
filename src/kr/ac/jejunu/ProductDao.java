@@ -2,9 +2,15 @@ package kr.ac.jejunu;
 
 import java.sql.*;
 
-public abstract class ProductDao {
+public class ProductDao {
+    private ConnectionMaker connectionMaker;
+
+    public ProductDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
+    }
+
     public Product get(Long id) throws ClassNotFoundException, SQLException {
-        Connection connection = getConnection();
+        Connection connection = connectionMaker.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("select * from productinfo where id = ?");
         preparedStatement.setLong(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -22,7 +28,7 @@ public abstract class ProductDao {
 
 
     public void add(Product product) throws ClassNotFoundException, SQLException {
-        Connection connection = getConnection();
+        Connection connection = connectionMaker.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("insert into productinfo (id, title, price) VALUES (?,?,?)");
         preparedStatement.setLong(1, product.getId());
         preparedStatement.setString(2, product.getTitle());
@@ -32,8 +38,5 @@ public abstract class ProductDao {
         preparedStatement.close();
         connection.close();
     }
-
-    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
-
     //"delete from userinfo where id = ?"
 }
