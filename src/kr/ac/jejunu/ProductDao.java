@@ -1,50 +1,60 @@
 package kr.ac.jejunu;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import javax.sql.DataSource;
 import java.sql.*;
 
 public class ProductDao {
-    private jdbcContext jdbcContext;
+    private JdbcTemplate jdbcTemplate;
 
-    public ProductDao() {
-
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-
-    public Product get(final Long id) throws ClassNotFoundException, SQLException {
-        return jdbcContext.jdbcContextWithStatementStrategyForQuery(new StatementStrategy() {
-            @Override
-            public PreparedStatement makeStatement(Connection connection) throws SQLException {
-                PreparedStatement preparedStatement;
-                preparedStatement = connection.prepareStatement("select * from productinfo where id = ?");
-                preparedStatement.setLong(1, id);
-                return preparedStatement;
-            }
-        });
+    public Product get(Long id) throws ClassNotFoundException, SQLException {
+        String query = "select * from product where id = ?";
+        Object[] params = new Object[]{id};
+        Product product = null;
+        try {
+            product = jdbcTemplate.queryForObject(query, params, (resultSet, i) -> {
+                Product product1 = new Product();
+                product1.setId(resultSet.getLong("id"));
+                product1.setTitle(resultSet.getString("title"));
+                product1.setPrice(resultSet.getInt("price"));
+                return product1;
+            });
+        } catch (DataAccessException e) {
+            throw e;
+        }
+        return product;
     }
 
 
 
     public void add(final Product product) throws ClassNotFoundException, SQLException {
-        final String query = "insert into productinfo (id, title, price) VALUES (?,?,?)";
-        final Object[] params = new Object[] {product.getId(), product.getTitle(), product.getPrice()};
+        String query = "insert into productinfo (id, title, price) VALUES (?,?,?)";
+        Object[] params = new Object[] {product.getId(), product.getTitle(), product.getPrice()};
 
-        jdbcContext.update(query, params);
+        jdbcTemplate.update(query, params);
     }
 
 
 
     public void delete(final Long id) throws SQLException {
-        final String query = "delete from productinfo where id = ?";
-        final Object[] params = new Object[] {id};
+        String query = "delete from productinfo where id = ?";
+        Object[] params = new Object[] {id};
 
-        jdbcContext.update(query, params);
+        jdbcTemplate.update(query, params);
     }
 
-
-    public void setJdbcContext(kr.ac.jejunu.jdbcContext jdbcContext) {
-        this.jdbcContext = jdbcContext;
+    public void update(Product product) throws SQLException {
+        String sql = "update product set title = ?, price = ? where id = ?";
+        Object[] params = new Object[]{product.getTitle(),product.getPrice(),product.getId()};
+        jdbcTemplate.update(sql, params);
     }
+
 
 
     //"delete from userinfo where id = ?"

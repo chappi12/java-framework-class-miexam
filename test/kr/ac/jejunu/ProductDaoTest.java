@@ -55,6 +55,33 @@ public class ProductDaoTest {
     }
 
     @Test
+    public void update() throws SQLException, ClassCastException, ClassNotFoundException {
+        Long id = Long.valueOf(new Random().nextInt(5000));
+        String title = "오렌지";
+        Integer price = 20000;
+
+        Product product = new Product();
+        product.setId(id);
+        product.setTitle(title);
+        product.setPrice(price);
+
+        productDao.add(product);
+
+        String retitle = "retitle";
+        Integer reprice = 8000;
+
+        product.setTitle(retitle);
+        product.setPrice(reprice);
+
+        productDao.update(product);
+
+        Product check = productDao.get(id);
+
+        assertThat(retitle, is(check.getTitle()));
+        assertThat(reprice,is(check.getPrice()));
+
+    }
+    @Test
     public void delete() throws SQLException, ClassNotFoundException {
         Product product = new Product();
 
