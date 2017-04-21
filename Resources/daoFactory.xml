@@ -8,10 +8,12 @@
         <property name="username" value="root"/>
         <property name="password" value="1234"/>
     </bean>
-    <bean id = "connectionMaker" class = "kr.ac.jejunu.JejuConnectionMaker"/>
-        <bean id="productDao" class="kr.ac.jejunu.ProductDao">
-            <!--constructor-arg ref="connectionMaker"/>
-            -->
-            <property name="dataSource" ref="connectionMaker"/>
-        </bean>
+    <bean id = "jdbcContext" class = "kr.ac.jejunu.jdbcContext">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="productDao" class="kr.ac.jejunu.ProductDao">
+        <!--constructor-arg ref="connectionMaker"/>
+        -->
+        <property name="jdbcContext" ref="jdbcContext"/>
+    </bean>
 </beans>
