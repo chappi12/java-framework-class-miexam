@@ -27,11 +27,12 @@ public class ProductDao {
             preparedStatement = connection.prepareStatement("select * from productinfo where id = ?");
             preparedStatement.setLong(1, id);
             resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            product = new Product();
-            product.setId(resultSet.getLong("id"));
-            product.setTitle(resultSet.getString("title"));
-            product.setPrice(resultSet.getInt("price"));
+            if(resultSet.next()) {
+                product = new Product();
+                product.setId(resultSet.getLong("id"));
+                product.setTitle(resultSet.getString("title"));
+                product.setPrice(resultSet.getInt("price"));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
@@ -93,6 +94,35 @@ public class ProductDao {
         }
     }
 
+    public void delete(Long id) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("delete from productinfo where id = ?");
+            preparedStatement.setLong(1, id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 
     //"delete from userinfo where id = ?"
