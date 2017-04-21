@@ -6,6 +6,6 @@ import java.sql.SQLException;
 /**
  * Created by SeungChan on 2017-04-21.
  */
-public interface ConnectionMaker {
+public interface dataSource {
     Connection getConnection() throws ClassNotFoundException, SQLException;
 }
