@@ -3,7 +3,7 @@ package kr.ac.jejunu;
 import javax.sql.DataSource;
 import java.sql.*;
 
-public class ProductDao {
+public abstract class ProductDao {
 
 
     private DataSource dataSource;
@@ -24,10 +24,11 @@ public class ProductDao {
         Product product = null;
         try {
             connection = dataSource.getConnection();
-            preparedStatement = connection.prepareStatement("select * from productinfo where id = ?");
-            preparedStatement.setLong(1, id);
+            StatementStrategy statementStrategy = new GetProjectStatementStrategy();
+            preparedStatement = statementStrategy.makeStatement(id, connection);
+
             resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 product = new Product();
                 product.setId(resultSet.getLong("id"));
                 product.setTitle(resultSet.getString("title"));
@@ -68,10 +69,9 @@ public class ProductDao {
         PreparedStatement preparedStatement = null;
         try {
             connection = dataSource.getConnection();
-            preparedStatement = connection.prepareStatement("insert into productinfo (id, title, price) VALUES (?,?,?)");
-            preparedStatement.setLong(1, product.getId());
-            preparedStatement.setString(2, product.getTitle());
-            preparedStatement.setInt(3, product.getPrice());
+            StatementStrategy statementStrategy = new AddProjectStatementStrategy();
+            preparedStatement = statementStrategy.makeStatement(product, connection);
+
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,13 +94,14 @@ public class ProductDao {
         }
     }
 
-    public void delete(Long id) {
+    public void delete(Long id) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+
         try {
             connection = dataSource.getConnection();
-            preparedStatement = connection.prepareStatement("delete from productinfo where id = ?");
-            preparedStatement.setLong(1, id);
+            StatementStrategy statementStrategy = new DeleteProjectStatementStrategy();
+            preparedStatement = statementStrategy.makeStatement(id, connection);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -123,6 +124,8 @@ public class ProductDao {
             }
         }
     }
+
+
 
 
     //"delete from userinfo where id = ?"
