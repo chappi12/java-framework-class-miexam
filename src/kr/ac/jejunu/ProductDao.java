@@ -26,35 +26,20 @@ public class ProductDao {
 
 
     public void add(final Product product) throws ClassNotFoundException, SQLException {
+        final String query = "insert into productinfo (id, title, price) VALUES (?,?,?)";
+        final Object[] params = new Object[] {product.getId(), product.getTitle(), product.getPrice()};
 
-        jdbcContext.jdbcContextWithStatementStrategyForUpdate(new StatementStrategy() {
-            @Override
-            public PreparedStatement makeStatement(Connection connection) throws SQLException {
-                PreparedStatement preparedStatement;
-                preparedStatement = connection.prepareStatement("insert into productinfo (id, title, price) VALUES (?,?,?)");
-                preparedStatement.setLong(1, product.getId());
-                preparedStatement.setString(2, product.getTitle());
-                preparedStatement.setInt(3, product.getPrice());
-                return preparedStatement;            }
-        });
+        jdbcContext.update(query, params);
     }
 
 
 
     public void delete(final Long id) throws SQLException {
+        final String query = "delete from productinfo where id = ?";
+        final Object[] params = new Object[] {id};
 
-        jdbcContext.jdbcContextWithStatementStrategyForUpdate(new StatementStrategy() {
-            @Override
-            public PreparedStatement makeStatement(Connection connection) throws SQLException {
-                PreparedStatement preparedStatement;
-                preparedStatement = connection.prepareStatement("delete from productinfo where id = ?");
-                preparedStatement.setLong(1, (Long) id);
-                return preparedStatement;
-            }
-        });
+        jdbcContext.update(query, params);
     }
-
-
 
 
     public void setJdbcContext(kr.ac.jejunu.jdbcContext jdbcContext) {

@@ -92,4 +92,20 @@ public class jdbcContext {
     }
 
 
+    public void update(String query, Object[] params) throws SQLException {
+        jdbcContextWithStatementStrategyForUpdate(new StatementStrategy() {
+
+            @Override
+            public PreparedStatement makeStatement(Connection connection) throws SQLException {
+                PreparedStatement preparedStatement;
+                preparedStatement = connection.prepareStatement(query);
+                for(int i = 1; i <= params.length; i++) {
+                    preparedStatement.setObject(i, params[i-1]);
+                }
+                return preparedStatement;
+            }
+        });
+    }
+
+
 }
